@@ -12,7 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ua.spring.tasktracker.dto.task.TaskPageDTO;
+import ua.spring.tasktracker.dto.task.TaskPageShortDTO;
 import ua.spring.tasktracker.dto.user.UserCreationDTO;
 import ua.spring.tasktracker.dto.user.UserDTO;
 import ua.spring.tasktracker.dto.user.UserPageDTO;
@@ -106,7 +106,7 @@ public class UserController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ApiError.class))}),
     })
-    public TaskPageDTO getAllTasksOfUser(@PathVariable Long id, @PageableDefault(size = 5, sort = "id",
+    public TaskPageShortDTO getAllTasksOfUser(@PathVariable Long id, @PageableDefault(size = 5, sort = "id",
             direction = Sort.Direction.ASC) Pageable pageable) {
         return taskService.getAllTasksByUserId(id, pageable);
     }

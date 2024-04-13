@@ -24,9 +24,9 @@ public class SwaggerConfiguration {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Spring First Practice")
+                        .title("Spring Second Practice")
                         .version(version)
-                        .description("First spring application. Controller with all 5 http methods")
+                        .description("Task tracker.")
                         .contact(new Contact()
                                 .email("d.shlapak2314@gmail.com")
                                 .name("Danylo Shlapak")))

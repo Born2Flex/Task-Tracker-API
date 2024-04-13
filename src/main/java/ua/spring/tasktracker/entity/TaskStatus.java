@@ -1,5 +1,5 @@
 package ua.spring.tasktracker.entity;
 
 public enum TaskStatus {
-    PLANNED, IN_PROGRESS, SIGNED, DONE, CANCELED
+    PLANNED, IN_PROGRESS, SIGNED, DONE, CANCELLED
 }

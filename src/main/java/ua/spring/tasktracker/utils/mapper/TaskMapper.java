@@ -6,6 +6,7 @@ import org.mapstruct.Mappings;
 import org.springframework.beans.factory.annotation.Autowired;
 import ua.spring.tasktracker.dto.task.TaskCreationDTO;
 import ua.spring.tasktracker.dto.task.TaskDTO;
+import ua.spring.tasktracker.dto.task.TaskShortDTO;
 import ua.spring.tasktracker.entity.Task;
 import ua.spring.tasktracker.repository.UserRepository;
 import ua.spring.tasktracker.utils.exceptions.UserNotFoundException;
@@ -22,9 +23,10 @@ public abstract class TaskMapper {
             @Mapping(target = "status", expression = "java(ua.spring.tasktracker.entity.TaskStatus.PLANNED)")
     })
     public abstract Task toEntity(TaskCreationDTO taskDTO);
-
     public abstract TaskDTO toDTO(Task task);
 
+    public abstract TaskShortDTO toShortDTO(Task task);
     public abstract List<TaskDTO> toListDTO(List<Task> tasks);
 
+    public abstract List<TaskShortDTO> toListShortDTO(List<Task> tasks);
 }
