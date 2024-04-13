@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ua.spring.tasktracker.utils.exceptions.EmailDuplicateException;
+import ua.spring.tasktracker.utils.exceptions.TaskNotFoundException;
 import ua.spring.tasktracker.utils.exceptions.UserNotFoundException;
 
 import java.time.LocalDateTime;
@@ -26,8 +27,8 @@ public class GlobalHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ApiError> handleNoSuchEntityException(UserNotFoundException e) {
+    @ExceptionHandler({UserNotFoundException.class, TaskNotFoundException.class})
+    public ResponseEntity<ApiError> handleNoSuchEntityException(Exception e) {
         log.info("User not found: {}", e.getMessage());
         ApiError response = new ApiError(LocalDateTime.now(), HttpStatus.NOT_FOUND, e.getMessage(), 2, List.of(e.getMessage()));
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);

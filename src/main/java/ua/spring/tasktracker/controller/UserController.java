@@ -12,10 +12,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ua.spring.tasktracker.dto.task.TaskPageDTO;
 import ua.spring.tasktracker.dto.user.UserCreationDTO;
 import ua.spring.tasktracker.dto.user.UserDTO;
 import ua.spring.tasktracker.dto.user.UserPageDTO;
 import ua.spring.tasktracker.dto.user.UserUpdateDTO;
+import ua.spring.tasktracker.service.TaskService;
 import ua.spring.tasktracker.service.UserService;
 import ua.spring.tasktracker.utils.exceptionhandler.ApiError;
 
@@ -24,6 +26,7 @@ import ua.spring.tasktracker.utils.exceptionhandler.ApiError;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final TaskService taskService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -91,5 +94,20 @@ public class UserController {
     })
     public UserPageDTO getAllUsers(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
         return userService.getAllUsers(pageable);
+    }
+
+    @GetMapping("/{id}/tasks")
+    @Operation(summary = "Get all tasks of user", description = "Get all tasks of user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found tasks",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}),
+    })
+    public TaskPageDTO getAllTasksOfUser(@PathVariable Long id, @PageableDefault(size = 5, sort = "id",
+            direction = Sort.Direction.ASC) Pageable pageable) {
+        return taskService.getAllTasksByUserId(id, pageable);
     }
 }

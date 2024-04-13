@@ -10,6 +10,8 @@ import ua.spring.tasktracker.entity.Task;
 import ua.spring.tasktracker.repository.UserRepository;
 import ua.spring.tasktracker.utils.exceptions.UserNotFoundException;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", imports = UserNotFoundException.class)
 public abstract class TaskMapper {
     @Autowired
@@ -22,5 +24,7 @@ public abstract class TaskMapper {
     public abstract Task toEntity(TaskCreationDTO taskDTO);
 
     public abstract TaskDTO toDTO(Task task);
+
+    public abstract List<TaskDTO> toListDTO(List<Task> tasks);
 
 }
