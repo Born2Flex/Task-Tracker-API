@@ -13,7 +13,10 @@ import ua.spring.tasktracker.utils.exceptions.InvalidTaskStatusTransitionExcepti
 import ua.spring.tasktracker.utils.exceptions.TaskNotFoundException;
 import ua.spring.tasktracker.utils.mapper.TaskMapper;
 
+import java.security.Principal;
 import java.util.List;
+
+import static ua.spring.tasktracker.service.UserService.validateAccess;
 
 @Slf4j
 @Service
@@ -22,14 +25,16 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final TaskMapper mapper;
 
-    public TaskDTO createTask(TaskCreationDTO task) {
+    public TaskDTO createTask(TaskCreationDTO task, Principal principal) {
+        validateAccess(task.getUserId(), principal);
         log.info("Creating new task");
         Task dbTask = mapper.toEntity(task);
         return mapper.toDTO(taskRepository.save(dbTask));
     }
 
-    public TaskDTO updateTaskStatus(TaskStatusDTO task, Long id) {
+    public TaskDTO updateTaskStatus(TaskStatusDTO task, Long id, Principal principal) {
         Task dbTask = taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
+        validateAccess(dbTask.getUser().getId(), principal);
         log.info("Updating task with id {}", id);
         if (!isValidTransition(dbTask.getStatus(), task.getStatus())) {
             log.info("Invalid status transition. Task status: {}, new status: {}", dbTask.getStatus(), task.getStatus());
@@ -40,8 +45,9 @@ public class TaskService {
         return mapper.toDTO(taskRepository.save(dbTask));
     }
 
-    public void deleteTask(Long id) {
-        taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
+    public void deleteTask(Long id, Principal principal) {
+        Task dbTask = taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
+        validateAccess(dbTask.getUser().getId(), principal);
         log.info("Deleting task with id {}", id);
         taskRepository.deleteById(id);
     }
@@ -58,7 +64,8 @@ public class TaskService {
         return new TaskPageDTO(pageable.getPageNumber(), page.getTotalPages(), tasks);
     }
 
-    public TaskPageShortDTO getAllTasksByUserId(Long userId, Pageable pageable) {
+    public TaskPageShortDTO getAllTasksByUserId(Long userId, Pageable pageable, Principal principal) {
+        validateAccess(userId, principal);
         log.info("Getting all tasks by user id {}", userId);
         Page<Task> page = taskRepository.findByUser_Id(userId, pageable);
         List<TaskShortDTO> tasks = mapper.toListShortDTO(page.getContent());

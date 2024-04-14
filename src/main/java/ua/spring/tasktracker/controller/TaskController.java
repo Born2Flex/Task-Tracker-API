@@ -1,8 +1,11 @@
 package ua.spring.tasktracker.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +21,11 @@ import ua.spring.tasktracker.dto.task.TaskStatusDTO;
 import ua.spring.tasktracker.service.TaskService;
 import ua.spring.tasktracker.utils.exceptionhandler.ApiError;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/tasks")
+@SecurityRequirement(name = "basicAuth")
 @RequiredArgsConstructor
 public class TaskController {
     private final TaskService taskService;
@@ -30,14 +36,14 @@ public class TaskController {
     @Operation(summary = "Create task", description = "Create a new task")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Task created successfully",
-                    content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = TaskCreationDTO.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskCreationDTO.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid task data",
-                    content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ApiError.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}),
     })
-    public TaskDTO createTask(@RequestBody @Valid TaskCreationDTO task) {
-        return taskService.createTask(task);
+    public TaskDTO createTask(@RequestBody @Valid TaskCreationDTO task, Principal principal) {
+        return taskService.createTask(task, principal);
     }
 
     @PutMapping("/{id}")
@@ -45,17 +51,17 @@ public class TaskController {
     @Operation(summary = "Update task status", description = "Update the status of an existing task")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Task status updated successfully",
-                    content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = TaskDTO.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Task not found",
-                    content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ApiError.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}),
             @ApiResponse(responseCode = "400", description = "Invalid task status data",
-                    content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ApiError.class))})
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))})
     })
-    public TaskDTO updateStatus(@RequestBody @Valid TaskStatusDTO task, @PathVariable Long id) {
-        return taskService.updateTaskStatus(task, id);
+    public TaskDTO updateStatus(@RequestBody @Valid TaskStatusDTO task, @PathVariable Long id, Principal principal) {
+        return taskService.updateTaskStatus(task, id, principal);
     }
 
     @DeleteMapping("/{id}")
@@ -65,11 +71,11 @@ public class TaskController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Task deleted successfully"),
             @ApiResponse(responseCode = "404", description = "Task not found",
-                    content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ApiError.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}),
     })
-    public void deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
+    public void deleteTask(@PathVariable Long id, Principal principal) {
+        taskService.deleteTask(id, principal);
     }
 
     @GetMapping
@@ -77,8 +83,8 @@ public class TaskController {
     @Operation(summary = "Get all tasks", description = "Get all tasks")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tasks found",
-                    content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = TaskPageDTO.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskPageDTO.class))}),
     })
     public TaskPageDTO getAllTasks(@PageableDefault(size = 5, sort = "id",
             direction = Sort.Direction.ASC) Pageable pageable) {
@@ -90,11 +96,11 @@ public class TaskController {
     @Operation(summary = "Get task by id", description = "Get task by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Task found",
-                    content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = TaskDTO.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskDTO.class))}),
             @ApiResponse(responseCode = "404", description = "Task not found",
-                    content = {@io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
-                            schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = ApiError.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}),
     })
     public TaskDTO getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id);

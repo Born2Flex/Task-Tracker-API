@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +23,11 @@ import ua.spring.tasktracker.service.TaskService;
 import ua.spring.tasktracker.service.UserService;
 import ua.spring.tasktracker.utils.exceptionhandler.ApiError;
 
+import java.security.Principal;
+
 @RestController
 @RequestMapping("/api/users")
+@SecurityRequirement(name = "basicAuth")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -59,8 +63,8 @@ public class UserController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ApiError.class))})
     })
-    public UserDTO updateUser(@RequestBody @Valid UserUpdateDTO userDTO, @PathVariable Long id) {
-        return userService.updateUser(userDTO, id);
+    public UserDTO updateUser(@RequestBody @Valid UserUpdateDTO userDTO, @PathVariable Long id, Principal principal) {
+        return userService.updateUser(userDTO, id, principal);
     }
 
     @GetMapping("/{id}")
@@ -73,6 +77,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "User not found",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ApiError.class))}),
+            @ApiResponse(responseCode = "403", description = "Access denied")
     })
     public UserDTO getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
@@ -86,8 +91,8 @@ public class UserController {
             @ApiResponse(responseCode = "204", description = "User deleted successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public void deleteUser(@PathVariable Long id, Principal principal) {
+        userService.deleteUser(id, principal);
     }
 
     @GetMapping
@@ -114,7 +119,7 @@ public class UserController {
                             schema = @Schema(implementation = ApiError.class))}),
     })
     public TaskPageShortDTO getAllTasksOfUser(@PathVariable Long id, @PageableDefault(size = 5, sort = "id",
-            direction = Sort.Direction.ASC) Pageable pageable) {
-        return taskService.getAllTasksByUserId(id, pageable);
+            direction = Sort.Direction.ASC) Pageable pageable, Principal principal) {
+        return taskService.getAllTasksByUserId(id, pageable, principal);
     }
 }

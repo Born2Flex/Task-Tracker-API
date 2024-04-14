@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,6 +39,13 @@ public class GlobalHandler {
     public ResponseEntity<ApiError> handleEmailDuplicateException(Exception e) {
         ApiError response = new ApiError(LocalDateTime.now(), HttpStatus.BAD_REQUEST, e.getMessage(), 3, List.of(e.getMessage()));
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleAccessDeniedException(AccessDeniedException e) {
+        log.info("Access denied: {}", e.getMessage());
+        ApiError response = new ApiError(LocalDateTime.now(), HttpStatus.FORBIDDEN, e.getMessage(), 4, List.of(e.getMessage()));
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)
