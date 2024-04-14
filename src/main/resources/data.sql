@@ -1,14 +1,23 @@
-INSERT INTO users (name, surname, email, role)
-VALUES ('John', 'Doe', 'test@gmail.com', 'USER'),
-       ('John', 'Smith', 'jsmith321@example.com', 'USER'),
-       ('Michael', 'Brown', 'mbrown789@example.com', 'USER'),
-       ('Sarah', 'Davis', 'sdavis234@example.com', 'USER'),
-       ('David', 'Wilson', 'dwilson567@example.com', 'USER'),
-       ('Jennifer', 'Martinez', 'jmartinez890@example.com', 'USER'),
-       ('Christopher', 'Taylor', 'ctaylor123@example.com', 'USER'),
-       ('Jessica', 'Anderson', 'janderson456@example.com', 'USER'),
-       ('Daniel', 'Thomas', 'dthomas789@example.com', 'USER'),
-       ('Amanda', 'Clark', 'aclark012@example.com', 'USER');
+INSERT INTO users (name, surname, email, role, password)
+VALUES ('Paul', 'Smith', 'admin', 'ADMIN', '$2a$10$fjPIRMxUefHoyPC0LwsaAOCvPyXLqYoWzTAem6GDcur1cGPeTLkYa'),
+       ('John', 'Doe', 'test@gmail.com', 'USER', '$2a$10$n4vdt2pcs.1XsRCbEW9IMudLTSvZam65HClA1tyxiAClXpZFNs5kW'),
+       ('John', 'Smith', 'jsmith321@gmail.com', 'USER', '$2a$10$9mljThYbd1XS7.hVig6bEOms9CGs8wuOdypNKvdvakGSHnxcEC.4e'),
+       ('Michael', 'Brown', 'mbrown789@gmail.com', 'USER',
+        '$2a$10$9mljThYbd1XS7.hVig6bEOms9CGs8wuOdypNKvdvakGSHnxcEC.4e'),
+       ('Sarah', 'Davis', 'sdavis234@gmail.com', 'USER',
+        '$2a$10$9mljThYbd1XS7.hVig6bEOms9CGs8wuOdypNKvdvakGSHnxcEC.4e'),
+       ('David', 'Wilson', 'dwilson567@gmail.com', 'USER',
+        '$2a$10$9mljThYbd1XS7.hVig6bEOms9CGs8wuOdypNKvdvakGSHnxcEC.4e'),
+       ('Jennifer', 'Martinez', 'jmartinez890@gmail.com', 'USER',
+        '$2a$10$9mljThYbd1XS7.hVig6bEOms9CGs8wuOdypNKvdvakGSHnxcEC.4e'),
+       ('Christopher', 'Taylor', 'ctaylor123@gmail.com', 'USER',
+        '$2a$10$9mljThYbd1XS7.hVig6bEOms9CGs8wuOdypNKvdvakGSHnxcEC.4e'),
+       ('Jessica', 'Anderson', 'janderson456@gmail.com', 'USER',
+        '$2a$10$9mljThYbd1XS7.hVig6bEOms9CGs8wuOdypNKvdvakGSHnxcEC.4e'),
+       ('Daniel', 'Thomas', 'dthomas789@gmail.com', 'USER',
+        '$2a$10$9mljThYbd1XS7.hVig6bEOms9CGs8wuOdypNKvdvakGSHnxcEC.4e'),
+       ('Amanda', 'Clark', 'aclark012@gmail.com', 'USER',
+        '$2a$10$9mljThYbd1XS7.hVig6bEOms9CGs8wuOdypNKvdvakGSHnxcEC.4e');
 
 INSERT INTO tasks (title, description, date, status, user_id)
 VALUES ('Add controller', 'Description', '2024-04-13', 'PLANNED', 1),

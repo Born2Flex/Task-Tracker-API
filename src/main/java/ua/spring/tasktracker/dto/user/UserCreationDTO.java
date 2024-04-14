@@ -15,6 +15,8 @@ public class UserCreationDTO {
     private String surname;
     @Email
     private String email;
+    @NotBlank
+    private String password;
     @NotNull
     private Role role;
 }
