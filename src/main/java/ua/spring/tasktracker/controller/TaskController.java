@@ -8,20 +8,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import ua.spring.tasktracker.dto.task.TaskCreationDTO;
-import ua.spring.tasktracker.dto.task.TaskDTO;
-import ua.spring.tasktracker.dto.task.TaskPageDTO;
-import ua.spring.tasktracker.dto.task.TaskStatusDTO;
+import ua.spring.tasktracker.dto.task.*;
 import ua.spring.tasktracker.service.TaskService;
 import ua.spring.tasktracker.utils.exceptionhandler.ApiError;
 
 import java.security.Principal;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -29,6 +28,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class TaskController {
     private final TaskService taskService;
+    private final MessageSource messageSource;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,11 +42,31 @@ public class TaskController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ApiError.class))}),
     })
-    public TaskDTO createTask(@RequestBody @Valid TaskCreationDTO task, Principal principal) {
+    public TaskDTO createTask(@RequestBody @Valid TaskCreationDTO task, Principal principal
+            , @RequestHeader(name = "lang", required = false) Locale locale) {
+        String greetingMessage = messageSource.getMessage("greeting.message", null, locale);
         return taskService.createTask(task, principal);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
+    @Operation(summary = "Update task", description = "Update an existing task")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task updated successfully",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TaskDTO.class))}),
+            @ApiResponse(responseCode = "404", description = "Task not found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid task data",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))})
+    })
+    public TaskDTO updateTask(@RequestBody @Valid TaskUpdateDTO task, @PathVariable Long id, Principal principal) {
+        return taskService.updateTask(task, id, principal);
+    }
+
+    @PatchMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Update task status", description = "Update the status of an existing task")
     @ApiResponses(value = {

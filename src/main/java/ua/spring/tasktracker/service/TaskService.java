@@ -9,8 +9,8 @@ import ua.spring.tasktracker.dto.task.*;
 import ua.spring.tasktracker.entity.Task;
 import ua.spring.tasktracker.entity.TaskStatus;
 import ua.spring.tasktracker.repository.TaskRepository;
-import ua.spring.tasktracker.utils.exceptions.InvalidTaskStatusTransitionException;
 import ua.spring.tasktracker.utils.exceptions.TaskNotFoundException;
+import ua.spring.tasktracker.utils.exceptions.TaskStateTransitionException;
 import ua.spring.tasktracker.utils.mapper.TaskMapper;
 
 import java.security.Principal;
@@ -32,13 +32,23 @@ public class TaskService {
         return mapper.toDTO(taskRepository.save(dbTask));
     }
 
+    public TaskDTO updateTask(TaskUpdateDTO task, Long id, Principal principal) {
+        Task dbTask = taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
+        validateAccess(dbTask.getUser().getId(), principal);
+        log.info("Updating task with id {}", id);
+        dbTask.setTitle(task.getTitle());
+        dbTask.setDescription(task.getDescription());
+        dbTask.setDate(task.getDate());
+        return mapper.toDTO(taskRepository.save(dbTask));
+    }
+
     public TaskDTO updateTaskStatus(TaskStatusDTO task, Long id, Principal principal) {
         Task dbTask = taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
         validateAccess(dbTask.getUser().getId(), principal);
         log.info("Updating task with id {}", id);
         if (!isValidTransition(dbTask.getStatus(), task.getStatus())) {
             log.info("Invalid status transition. Task status: {}, new status: {}", dbTask.getStatus(), task.getStatus());
-            throw new InvalidTaskStatusTransitionException("Can't change status from " + dbTask.getStatus()
+            throw new TaskStateTransitionException("Can't change status from " + dbTask.getStatus()
                     + " to " + task.getStatus());
         }
         dbTask.setStatus(task.getStatus());
