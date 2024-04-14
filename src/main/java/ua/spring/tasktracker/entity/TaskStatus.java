@@ -20,6 +20,10 @@ public enum TaskStatus {
         CANCELLED.validTransitions = EnumSet.noneOf(TaskStatus.class);
     }
 
+    public Set<TaskStatus> getValidTransitions() {
+        return validTransitions;
+    }
+
     public static boolean isValidTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         return currentStatus.validTransitions.contains(newStatus);
     }
