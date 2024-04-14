@@ -46,7 +46,7 @@ public class TaskService {
         Task dbTask = taskRepository.findById(id).orElseThrow(TaskNotFoundException::new);
         validateAccess(dbTask.getUser().getId(), principal);
         log.info("Updating task with id {}", id);
-        if (!isValidTransition(dbTask.getStatus(), task.getStatus())) {
+        if (!TaskStatus.isValidTransition(dbTask.getStatus(), task.getStatus())) {
             log.info("Invalid status transition. Task status: {}, new status: {}", dbTask.getStatus(), task.getStatus());
             throw new TaskStateTransitionException("Can't change status from " + dbTask.getStatus()
                     + " to " + task.getStatus());
@@ -80,18 +80,5 @@ public class TaskService {
         Page<Task> page = taskRepository.findByUser_Id(userId, pageable);
         List<TaskShortDTO> tasks = mapper.toListShortDTO(page.getContent());
         return new TaskPageShortDTO(pageable.getPageNumber(), page.getTotalPages(), tasks);
-    }
-
-    private boolean isValidTransition(TaskStatus currentStatus, TaskStatus newStatus) {
-        return switch (currentStatus) {
-            case PLANNED:
-                yield newStatus == TaskStatus.IN_PROGRESS || newStatus == TaskStatus.CANCELLED;
-            case IN_PROGRESS:
-                yield newStatus == TaskStatus.SIGNED || newStatus == TaskStatus.CANCELLED;
-            case SIGNED:
-                yield newStatus == TaskStatus.DONE || newStatus == TaskStatus.CANCELLED;
-            default:
-                yield false;
-        };
     }
 }

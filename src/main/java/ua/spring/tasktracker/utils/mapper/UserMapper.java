@@ -14,6 +14,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "password", source = "password", qualifiedByName = "encodePassword")
+    @Mapping(target = "role", expression = "java(ua.spring.tasktracker.entity.Role.USER)")
     User toEntity(UserCreationDTO userDTO, @Context PasswordEncoder passwordEncoder);
 
     UserDTO toDTO(User user);
