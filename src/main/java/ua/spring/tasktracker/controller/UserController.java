@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.spring.tasktracker.dto.task.TaskPageShortDTO;
 import ua.spring.tasktracker.dto.user.UserCreationDTO;
@@ -29,6 +30,7 @@ public class UserController {
     private final TaskService taskService;
 
     @PostMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Add user", description = "Add a new user")
     @ApiResponses(value = {
@@ -44,6 +46,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Update user", description = "Update an existing user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User updated successfully",
@@ -61,6 +64,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @Operation(summary = "Get user by id", description = "Get user by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found user",
@@ -75,6 +79,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete user", description = "Delete a user by ID")
     @ApiResponses(value = {
@@ -86,6 +91,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @Operation(summary = "Get all users", description = "Get all users")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found users",
@@ -97,6 +103,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/tasks")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Get all tasks of user", description = "Get all tasks of user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Found tasks",

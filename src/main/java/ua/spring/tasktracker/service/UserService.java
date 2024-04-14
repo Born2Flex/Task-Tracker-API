@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ua.spring.tasktracker.dto.user.UserCreationDTO;
 import ua.spring.tasktracker.dto.user.UserDTO;
@@ -23,6 +24,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDTO createUser(UserCreationDTO user) {
         log.info("Creating new user");
@@ -30,7 +32,7 @@ public class UserService {
             log.info("Email {} is already in use", user.getEmail());
             throw new EmailDuplicateException();
         }
-        User dbUser = userMapper.toEntity(user);
+        User dbUser = userMapper.toEntity(user, passwordEncoder);
         return userMapper.toDTO(userRepository.save(dbUser));
     }
 

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.spring.tasktracker.dto.task.TaskCreationDTO;
 import ua.spring.tasktracker.dto.task.TaskDTO;
@@ -25,6 +26,7 @@ public class TaskController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Create task", description = "Create a new task")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Task created successfully",
@@ -39,6 +41,7 @@ public class TaskController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @Operation(summary = "Update task status", description = "Update the status of an existing task")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Task status updated successfully",
@@ -56,6 +59,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER', 'ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete task", description = "Delete task by id")
     @ApiResponses(value = {
@@ -69,6 +73,7 @@ public class TaskController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @Operation(summary = "Get all tasks", description = "Get all tasks")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tasks found",
@@ -81,6 +86,7 @@ public class TaskController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @Operation(summary = "Get task by id", description = "Get task by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Task found",
