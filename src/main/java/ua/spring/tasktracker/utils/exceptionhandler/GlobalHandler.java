@@ -68,6 +68,7 @@ public class GlobalHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleException(Exception e) {
         log.warn("Unexpected error: {}", e.getMessage());
+        e.printStackTrace();
         ApiError response = new ApiError(LocalDateTime.now(), HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), 4, List.of(e.getMessage()));
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
