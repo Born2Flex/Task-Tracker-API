@@ -48,6 +48,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.new-release.outputs.upload_url }}
-        asset_path: ./my-artifact.zip
-        asset_name: release-v${{ github.run_number }}.zip
-        asset_content_type: application/zip
+        asset_path: target/task-tracker-0.0.1.jar
+        asset_name: task-tracker-${{ github.run_number }}.jar
+        asset_content_type: application/java-archive
